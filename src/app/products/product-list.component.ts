@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
-import { Observable, EMPTY, Subject, combineLatest } from 'rxjs';
+import { Observable, EMPTY, Subject, combineLatest, BehaviorSubject } from 'rxjs';
 
 import { Product } from './product';
 import { ProductService } from './product.service';
@@ -16,10 +16,10 @@ export class ProductListComponent {
   pageTitle = 'Product List';
   errorMessage = '';
 
-  private categorySubject = new Subject<number>();
+  private categorySubject = new BehaviorSubject<number>(0);
   private categorySelectedAction$ = this.categorySubject.asObservable();
 
-  products$ = combineLatest([this.productService.productsWithCategory$, this.categorySelectedAction$.pipe(startWith(0))]).pipe(
+  products$ = combineLatest([this.productService.productsWithCategory$, this.categorySelectedAction$]).pipe(
     tap((result) => console.log('combine streams result:', result)),
     map(([products, selectedCategoryId]) =>
       products.filter(product => selectedCategoryId ? product.categoryId === selectedCategoryId : true)),
