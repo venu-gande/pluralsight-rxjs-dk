@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable, throwError, combineLatest, BehaviorSubject, Subject, merge } from 'rxjs';
-import { catchError, tap, map, scan } from 'rxjs/operators';
+import { catchError, tap, map, scan, shareReplay } from 'rxjs/operators';
 
 import { Product } from './product';
 import { Supplier } from '../suppliers/supplier';
@@ -33,7 +33,9 @@ export class ProductService {
     map(([products, categories]) => products.map(product => ({
       ...product,
       category: categories.find(category => product.categoryId === category.id).name
-    }) as Product)));
+    }) as Product)),
+    shareReplay(1)
+  );
 
   // selectedProduct$ = this.productsWithCategory$.pipe(
   //   map(products => products.find(product => product.id === 5))
